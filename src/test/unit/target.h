@@ -25,6 +25,7 @@
 #define USE_GPS_PROTO_I2C_NAV
 #define USE_GPS_PROTO_NAZA
 #define USE_GPS_PROTO_MTK
+#define USE_GPS_PROTO_MSP
 #define USE_DASHBOARD
 #define USE_NAV
 #define USE_TELEMETRY

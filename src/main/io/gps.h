@@ -38,6 +38,7 @@ typedef enum {
     GPS_NAZA,
     GPS_UBLOX7PLUS,
     GPS_MTK,
+    GPS_MSP,
     GPS_PROVIDER_COUNT
 } gpsProvider_e;
 
@@ -150,6 +151,10 @@ typedef struct {
 
 extern gpsSolutionData_t gpsSol;
 extern gpsStatistics_t   gpsStats;
+
+#if defined(USE_GPS) && defined(USE_GPS_PROTO_MSP)
+extern gpsSolutionData_t gpsDataMps;
+#endif
 
 struct magDev_s;
 bool gpsMagDetect(struct magDev_s *mag);

@@ -170,6 +170,7 @@ COMMON_SRC = \
             io/gps_ublox.c \
             io/gps_nmea.c \
             io/gps_naza.c \
+            io/gps_msp.c \
             io/ledstrip.c \
             io/osd.c \
             navigation/navigation.c \

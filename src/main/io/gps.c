@@ -71,6 +71,10 @@ gpsReceiverData_t gpsState;
 gpsStatistics_t   gpsStats;
 gpsSolutionData_t gpsSol;
 
+#ifdef USE_GPS_PROTO_MSP
+gpsSolutionData_t gpsDataMps;
+#endif
+
 // Map gpsBaudRate_e index to baudRate_e
 baudRate_e gpsToSerialBaudRate[GPS_BAUDRATE_COUNT] = { BAUD_115200, BAUD_57600, BAUD_38400, BAUD_19200, BAUD_9600 };
 
@@ -109,6 +113,13 @@ static gpsProviderDescriptor_t  gpsProviders[GPS_PROVIDER_COUNT] = {
     /* MTK GPS */
 #ifdef USE_GPS_PROTO_MTK
     { MODE_RXTX, false, &gpsRestartNMEA_MTK, &gpsHandleMTK },
+#else
+    { 0, false,  NULL, NULL },
+#endif
+
+    /* MSP */
+#ifdef USE_GPS_PROTO_MSP
+    { 0, false,  &gpsRestartMSP, &gpsHandleMSP },
 #else
     { 0, false,  NULL, NULL },
 #endif
@@ -213,6 +224,14 @@ void gpsInit(void)
     gpsResetSolution();
     gpsSetProtocolTimeout(GPS_TIMEOUT);
     gpsSetState(GPS_UNKNOWN);
+
+#ifdef USE_GPS_PROTO_MSP
+    // MPS is handled elsewhere, so no need to check serial protocol
+    if (gpsState.gpsConfig->provider == GPS_MSP) {
+        gpsSetState(GPS_INITIALIZING);
+        return;
+    }
+#endif
 
     // If given GPS provider has protocol() function not defined - we can't use it
     if (!gpsProviders[gpsState.gpsConfig->provider].protocol) {

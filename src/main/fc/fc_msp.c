@@ -76,6 +76,7 @@
 #include "io/asyncfatfs/asyncfatfs.h"
 #include "io/flashfs.h"
 #include "io/gps.h"
+#include "io/gps_private.h"
 #include "io/opflow.h"
 #include "io/rangefinder.h"
 #include "io/ledstrip.h"
@@ -2328,6 +2329,20 @@ static mspResult_e mspFcProcessInCommand(uint16_t cmdMSP, sbuf_t *src)
 #ifdef USE_GPS
     case MSP_SET_RAW_GPS:
         if (dataSize >= 14) {
+
+#if defined(USE_GPS) && defined(USE_GPS_PROTO_MSP)
+            if (gpsState.gpsConfig->provider == GPS_MSP) {
+                gpsDataMps.fixType = sbufReadU8(src);
+                gpsDataMps.numSat = sbufReadU8(src);
+                gpsDataMps.llh.lat = sbufReadU32(src);
+                gpsDataMps.llh.lon = sbufReadU32(src);
+                gpsDataMps.llh.alt = sbufReadU16(src);
+                gpsDataMps.groundSpeed = sbufReadU16(src);
+                gpsDataMps.flags.hasNewData = true;
+                return MSP_RESULT_ACK;
+            }
+#endif
+
             if (sbufReadU8(src)) {
                 ENABLE_STATE(GPS_FIX);
             } else {
